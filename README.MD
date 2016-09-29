@@ -1,0 +1,1 @@
+Give any stock name to the bot and it'll give you the details of that particular stock
