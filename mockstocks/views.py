@@ -7,7 +7,14 @@ import json
 import requests
 
 VERIFY_TOKEN = '29thsept2016'
-PAGE_ACCESS_TOKEN = 'EAAPaQJyu0WMBAOfZCNmHLsNUxq5cMBmeZBBgNO2ZBeYmEAnoJRtS5PzNd72ZC0fezaOaZC3jzL3wHTguXwwypolfvQiZCDdflHoVboh51dbCCDwTs0RZBRtlxFIWzhKgSLXJhUz5djAJK3KUpURnno607ydfD8vwzHEnBMbTHODpwZDZD'
+PAGE_ACCESS_TOKEN = 'EAAPaQJyu0WMBAAtXxDyHPZAAbcHHIaixe75auZCfLb0ysIJkeC1sf2bncRhRfjsopPvY8CZByFI6svVGPSI8es1oIRPaZBwdaXO2ex9KcH82cMworCESyeuTdzUB0Yge7d4XdsSo5yFYMsrvnk1kkqqaGAs4fX2yGmyZCUsRMRQZDZD'
+
+def post_fb_msg(fbid,message):
+	return 1
+	post_fb_url='https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
+	response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text": message}})
+	status = requests.post(post_fb_url, headers={"Content-Type": "application/json"},data=response_msg)
+	print status.json()
 
 class MyChatBotView(generic.View):
 	def get(self,request,*args,**kwargs):
@@ -28,10 +35,12 @@ class MyChatBotView(generic.View):
 				try:
 					sender_id = message['sender']['id']
 					message_text = message['message']['text']
+					post_fb_msg(sender_id,message_text)
 				except Exception as e:
 					print e
 
 		return HttpResponse()
 
 def index(request):
-	return HttpResponse('hi')
+	# return HttpResponse('hi')
+	return HttpResponse( post_fb_msg('12','hi') )
