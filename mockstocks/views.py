@@ -17,7 +17,7 @@ def stock(message):
 	resp = requests.get(url=url).text.split('(')[1].split(')')[0]
 	data=json.loads(resp)
 	output_text = ''
-	output_text = 'Name: %s\nSymbol: %s\nLast Price: %s'%(data['Name'],data['Symbol'],data['LastPrice'])
+	output_text = 'Name: %s\nSymbol: %s\nLast Price: %s\nChange Percent: %s\nHigh: %s\nLow: %s'%(data['Name'],data['Symbol'],data['LastPrice'],data['ChangePercent'],data['High'],data['Low'])
 	return output_text
 
 def post_fb_msg(fbid,message):
