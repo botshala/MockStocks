@@ -5,13 +5,25 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 import json
 import requests
+import stocks
 
 VERIFY_TOKEN = '29thsept2016'
 PAGE_ACCESS_TOKEN = 'EAAPaQJyu0WMBAAtXxDyHPZAAbcHHIaixe75auZCfLb0ysIJkeC1sf2bncRhRfjsopPvY8CZByFI6svVGPSI8es1oIRPaZBwdaXO2ex9KcH82cMworCESyeuTdzUB0Yge7d4XdsSo5yFYMsrvnk1kkqqaGAs4fX2yGmyZCUsRMRQZDZD'
 
+def stock(message):
+	code = stocks.get_code(message)
+	print code
+	url = 'http://dev.markitondemand.com/MODApis/Api/v2/Quote/jsonp?symbol=%s&callback=myFunction'%(code)
+	resp = requests.get(url=url).text.split('(')[1].split(')')[0]
+	data=json.loads(resp)
+	output_text = ''
+	output_text = 'Name: %s\nSymbol: %s\nLast Price: %s'%(data['Name'],data['Symbol'],data['LastPrice'])
+	return output_text
+
 def post_fb_msg(fbid,message):
 	post_fb_url='https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
-	response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text": message}})
+	output_text = stock(message)
+	response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text": output_text }})
 	status = requests.post(post_fb_url, headers={"Content-Type": "application/json"},data=response_msg)
 	print status.json()
 
@@ -41,5 +53,6 @@ class MyChatBotView(generic.View):
 		return HttpResponse()
 
 def index(request):
-	return HttpResponse('hi')
+	# return HttpResponse('hi')
 	# return HttpResponse( post_fb_msg('12','hi') )
+	return HttpResponse(stock('nyse'))
