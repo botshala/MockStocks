@@ -44,6 +44,11 @@ def post_fb_msg(fbid,message):
 				        "content_type":"text",
 				        "title":"Weekly",
 				        "payload":"weekly:%s"%(code)
+				      },
+				      {
+				        "content_type":"text",
+				        "title":"Quit",
+				        "payload":"quit"
 				      }
 				    ]
 				  }
@@ -56,12 +61,9 @@ def handle_quickreply(fbid,payload):
 	print 'payload=%s'%payload
 	payload, code = payload.split(':')
 	print payload, code
-	if not payload:
-		return
-	elif payload == "daily":
-		print 'inside'
+	if payload == "daily":
 		image_url = 'http://stockcharts.com/c-sc/sc?s=%s&p=D&b=5&g=0&i=t15810600769&r=1475241538081'%(code)
-	else:
+	elif payload == 'weekly':
 		image_url = 'http://stockcharts.com/c-sc/sc?s=%s&p=W&b=5&g=0&i=t57136307326&r=1475242265838'%(code)
 
 	response_msg_image = {
@@ -100,8 +102,11 @@ class MyChatBotView(generic.View):
 			for message in entry['messaging']:
 				try:
 					if 'quick_reply' in message['message']:
+						if message['message']['quick_reply']['payload'] == 'quit':
+							return HttpResponse()
+
 						handle_quickreply(message['sender']['id'],message['message']['quick_reply']['payload'])
-						return HttpResponse()
+						
 
 				except Exception as e:
 					print e
