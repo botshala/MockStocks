@@ -102,11 +102,9 @@ class MyChatBotView(generic.View):
 			for message in entry['messaging']:
 				try:
 					if 'quick_reply' in message['message']:
-						if message['message']['quick_reply']['payload'] == 'quit':
-							return HttpResponse()
-
-						handle_quickreply(message['sender']['id'],message['message']['quick_reply']['payload'])
-						
+						while message['message']['quick_reply']['payload'] != 'quit':
+							handle_quickreply(message['sender']['id'],message['message']['quick_reply']['payload'])
+						return HttpResponse()
 
 				except Exception as e:
 					print e
