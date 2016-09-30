@@ -62,7 +62,7 @@ def post_fb_msg(fbid,message):
 
 def handle_quickreply(fbid,payload):
 	print 'payload=%s'%payload
-	if payload == 'quit' || not payload:
+	if payload == 'quit' or not payload:
 		return
 	payload, code = payload.split(':')
 	print payload, code
