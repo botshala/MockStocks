@@ -16,16 +16,33 @@ def stock(message):
 	url = 'http://dev.markitondemand.com/MODApis/Api/v2/Quote/jsonp?symbol=%s&callback=myFunction'%(code)
 	resp = requests.get(url=url).text.split('(')[1].split(')')[0]
 	data=json.loads(resp)
+	image_url = 'http://stockcharts.com/c-sc/sc?s=%s&p=D&b=5&g=0&i=t15810600769&r=1475241538081'%(code)
 	output_text = ''
 	output_text = 'Name: %s\nSymbol: %s\nLast Price: %s\nChange Percent: %s\nHigh: %s\nLow: %s'%(data['Name'],data['Symbol'],data['LastPrice'],data['ChangePercent'],data['High'],data['Low'])
-	return output_text
+	return image_url, output_text
 
 def post_fb_msg(fbid,message):
 	post_fb_url='https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
-	output_text = stock(message)
+	image_url, output_text = stock(message)
 	response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text": output_text }})
-	status = requests.post(post_fb_url, headers={"Content-Type": "application/json"},data=response_msg)
-	print status.json()
+	response_msg_image = {
+				"recipient":{
+				    "id":fbid
+				  },
+				  "message":{
+				    "attachment":{
+				      "type":"image",
+				      "payload":{
+				        "url":	image_url
+				      }
+				    }
+				  }
+	}
+	response_msg_image = json.dumps(response_msg_image)
+	status1 = requests.post(post_fb_url, headers={"Content-Type": "application/json"},data=response_msg)
+	status2 = requests.post(post_fb_url, headers={"Content-Type": "application/json"},data=response_msg_image)
+	print status1.json()
+	print status2.json()
 
 class MyChatBotView(generic.View):
 	def get(self,request,*args,**kwargs):
