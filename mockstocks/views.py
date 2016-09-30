@@ -18,7 +18,7 @@ def stock(message):
 	data=json.loads(resp)
 	image_url = 'http://stockcharts.com/c-sc/sc?s=%s&p=D&b=5&g=0&i=t15810600769&r=1475241538081'%(code)
 	output_text = ''
-	output_text = 'Name: %s\nSymbol: %s\nLast Price: %s\nChange Percent: %s\nHigh: %s\nLow: %s'%(data['Name'],data['Symbol'],data['LastPrice'],data['ChangePercent'],data['High'],data['Low'])
+	output_text = 'Name: %s\nSymbol: %s\nOpen: %s\nLast Price: %s\nChange Percent: %s\nHigh: %s\nLow: %s'%(data['Name'],data['Symbol'],data['Open'],data['LastPrice'],data['ChangePercent'],data['High'],data['Low'])
 	return image_url, output_text
 
 def post_fb_msg(fbid,message):
