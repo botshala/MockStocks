@@ -38,11 +38,6 @@ def quick_response(fbid,code):
 				        "content_type":"text",
 				        "title":"Weekly",
 				        "payload":"weekly:%s"%(code)
-				      },
-				      {
-				        "content_type":"text",
-				        "title":"Quit",
-				        "payload":"quit"
 				      }
 				    ]
 				  }
@@ -88,7 +83,7 @@ def handle_quickreply(fbid,payload):
 	post_fb_url='https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
 	status3 = requests.post(post_fb_url, headers={"Content-Type": "application/json"},data=response_msg_image)
 	print status3.json()
-	quick_response(fbid,code)
+	# quick_response(fbid,code)
 
 class MyChatBotView(generic.View):
 	def get(self,request,*args,**kwargs):
