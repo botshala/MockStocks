@@ -20,14 +20,8 @@ def stock(message):
 	output_text = 'Name: %s\nSymbol: %s\nOpen: %s\nLast Price: %s\nChange Percent: %s\nHigh: %s\nLow: %s'%(data['Name'],data['Symbol'],data['Open'],data['LastPrice'],data['ChangePercent'],data['High'],data['Low'])
 	return output_text
 
-def post_fb_msg(fbid,message):
+def quick_response(fbid,code):
 	post_fb_url='https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
-	output_text = stock(message)
-	code = stocks.get_code(message)
-	response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text": output_text }})
-	status1 = requests.post(post_fb_url, headers={"Content-Type": "application/json"},data=response_msg)
-	print status1.json()
-
 	response_msg_quick = {
 				"recipient":{
 				    "id":fbid
@@ -57,6 +51,15 @@ def post_fb_msg(fbid,message):
 	status2 = requests.post(post_fb_url, headers={"Content-Type": "application/json"},data=response_msg_quick)
 	print status2.json()
 
+def post_fb_msg(fbid,message):
+	post_fb_url='https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
+	output_text = stock(message)
+	code = stocks.get_code(message)
+	response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text": output_text }})
+	status1 = requests.post(post_fb_url, headers={"Content-Type": "application/json"},data=response_msg)
+	print status1.json()
+	quick_response(fbid,code)
+
 def handle_quickreply(fbid,payload):
 	print 'payload=%s'%payload
 	payload, code = payload.split(':')
@@ -83,6 +86,7 @@ def handle_quickreply(fbid,payload):
 	post_fb_url='https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
 	status3 = requests.post(post_fb_url, headers={"Content-Type": "application/json"},data=response_msg_image)
 	print status3.json()
+	quick_response(fbid,code)
 
 class MyChatBotView(generic.View):
 	def get(self,request,*args,**kwargs):
