@@ -25,6 +25,9 @@ def post_fb_msg(fbid,message):
 	output_text = stock(message)
 	code = stocks.get_code(message)
 	response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text": output_text }})
+	status1 = requests.post(post_fb_url, headers={"Content-Type": "application/json"},data=response_msg)
+	print status1.json()
+
 	response_msg_quick = {
 				"recipient":{
 				    "id":fbid
@@ -45,15 +48,11 @@ def post_fb_msg(fbid,message):
 				    ]
 				  }
 	}
-	
 	response_msg_quick = json.dumps(response_msg_quick)
-	status1 = requests.post(post_fb_url, headers={"Content-Type": "application/json"},data=response_msg)
 	status2 = requests.post(post_fb_url, headers={"Content-Type": "application/json"},data=response_msg_quick)
-	print status1.json()
 	print status2.json()
 
-	print "****payload=%s"%payload
-
+def handle_quickreply(fbid,payload):
 	if not payload:
 		return
 	elif payload == "daily":
@@ -75,6 +74,7 @@ def post_fb_msg(fbid,message):
 				  }
 	}
 	response_msg_image = json.dumps(response_msg_image)
+	post_fb_url='https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
 	status3 = requests.post(post_fb_url, headers={"Content-Type": "application/json"},data=response_msg_image)
 	print status3.json()
 
@@ -94,6 +94,14 @@ class MyChatBotView(generic.View):
 		print incoming_message
 		for entry in incoming_message['entry']:
 			for message in entry['messaging']:
+				try:
+					if 'quick_reply' in message['message']:
+						handle_quickreply(message['sender']['id'],message['message']['quick_reply']['payload'])
+						return HttpResponse()
+
+				except Exception as e:
+					print e
+
 				try:
 					sender_id = message['sender']['id']
 					message_text = message['message']['text']
