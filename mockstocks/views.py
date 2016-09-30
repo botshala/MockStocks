@@ -23,6 +23,7 @@ def stock(message):
 def post_fb_msg(fbid,message):
 	post_fb_url='https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
 	output_text = stock(message)
+	code = stocks.get_code(message)
 	response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text": output_text }})
 	status1 = requests.post(post_fb_url, headers={"Content-Type": "application/json"},data=response_msg)
 	print status1.json()
@@ -37,12 +38,12 @@ def post_fb_msg(fbid,message):
 				      {
 				        "content_type":"text",
 				        "title":"Daily",
-				        "payload":"daily"
+				        "payload":"daily:%s"%(code)
 				      },
 				      {
 				        "content_type":"text",
 				        "title":"Weekly",
-				        "payload":"weekly"
+				        "payload":"weekly:%s"%(code)
 				      }
 				    ]
 				  }
@@ -52,10 +53,13 @@ def post_fb_msg(fbid,message):
 	print status2.json()
 
 def handle_quickreply(fbid,payload):
-	code = stocks.get_code(message)
+	print 'payload=%s'%payload
+	payload, code = payload.split(':')
+	print payload, code
 	if not payload:
 		return
 	elif payload == "daily":
+		print 'inside'
 		image_url = 'http://stockcharts.com/c-sc/sc?s=%s&p=D&b=5&g=0&i=t15810600769&r=1475241538081'%(code)
 	else:
 		image_url = 'http://stockcharts.com/c-sc/sc?s=%s&p=W&b=5&g=0&i=t57136307326&r=1475242265838'%(code)
@@ -114,4 +118,4 @@ class MyChatBotView(generic.View):
 def index(request):
 	# return HttpResponse('hi')
 	# return HttpResponse( post_fb_msg('12','hi') )
-	return HttpResponse(stock('nyse'))
+	return HttpResponse(handle_quickreply('123','daily:aapl'))
