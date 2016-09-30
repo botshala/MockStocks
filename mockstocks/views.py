@@ -62,6 +62,8 @@ def post_fb_msg(fbid,message):
 
 def handle_quickreply(fbid,payload):
 	print 'payload=%s'%payload
+	if payload == 'quit':
+		return
 	payload, code = payload.split(':')
 	print payload, code
 	if payload == "daily":
@@ -106,8 +108,7 @@ class MyChatBotView(generic.View):
 			for message in entry['messaging']:
 				try:
 					if 'quick_reply' in message['message']:
-						while message['message']['quick_reply']['payload'] != 'quit':
-							handle_quickreply(message['sender']['id'],message['message']['quick_reply']['payload'])
+						handle_quickreply(message['sender']['id'],message['message']['quick_reply']['payload'])
 						return HttpResponse()
 
 				except Exception as e:
