@@ -23,7 +23,6 @@ def stock(message):
 def post_fb_msg(fbid,message):
 	post_fb_url='https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
 	output_text = stock(message)
-	code = stocks.get_code(message)
 	response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text": output_text }})
 	status1 = requests.post(post_fb_url, headers={"Content-Type": "application/json"},data=response_msg)
 	print status1.json()
@@ -53,6 +52,7 @@ def post_fb_msg(fbid,message):
 	print status2.json()
 
 def handle_quickreply(fbid,payload):
+	code = stocks.get_code(message)
 	if not payload:
 		return
 	elif payload == "daily":
